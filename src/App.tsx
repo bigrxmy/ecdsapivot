@@ -3,17 +3,19 @@ import { Shield, Key, Search, AlertTriangle, CheckCircle } from 'lucide-react';
 import TransactionAnalyzer from './components/TransactionAnalyzer';
 import DuplicateNonceDetector from './components/DuplicateNonceDetector';
 import PrivateKeyRecovery from './components/PrivateKeyRecovery';
+import DenovoAnalyzer from './components/DenovoAnalyzer';
 import ResultsDisplay from './components/ResultsDisplay';
 import { AnalysisResult } from './types/bitcoin';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'analyze' | 'detect' | 'recover'>('analyze');
+  const [activeTab, setActiveTab] = useState<'analyze' | 'detect' | 'recover' | 'denovo'>('analyze');
   const [results, setResults] = useState<AnalysisResult[]>([]);
 
   const tabs = [
     { id: 'analyze' as const, label: 'Transaction Analysis', icon: Search },
     { id: 'detect' as const, label: 'Duplicate Nonce Detection', icon: AlertTriangle },
     { id: 'recover' as const, label: 'Private Key Recovery', icon: Key },
+    { id: 'denovo' as const, label: 'Denovo Scanner', icon: Shield },
   ];
 
   const handleAnalysisComplete = (newResults: AnalysisResult[]) => {
@@ -70,6 +72,9 @@ function App() {
               )}
               {activeTab === 'recover' && (
                 <PrivateKeyRecovery onAnalysisComplete={handleAnalysisComplete} />
+              )}
+              {activeTab === 'denovo' && (
+                <DenovoAnalyzer onAnalysisComplete={handleAnalysisComplete} />
               )}
             </div>
           </div>
