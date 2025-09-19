@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Shield, Key, Search, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Shield, Key, Search, AlertTriangle, CheckCircle, Zap } from 'lucide-react';
 import TransactionAnalyzer from './components/TransactionAnalyzer';
 import DuplicateNonceDetector from './components/DuplicateNonceDetector';
 import PrivateKeyRecovery from './components/PrivateKeyRecovery';
 import DenovoAnalyzer from './components/DenovoAnalyzer';
+import AttackAIOCrypto from './components/AttackAIOCrypto';
 import ResultsDisplay from './components/ResultsDisplay';
 import { AnalysisResult } from './types/bitcoin';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'analyze' | 'detect' | 'recover' | 'denovo'>('analyze');
+  const [activeTab, setActiveTab] = useState<'analyze' | 'detect' | 'recover' | 'denovo' | 'attackaio'>('analyze');
   const [results, setResults] = useState<AnalysisResult[]>([]);
 
   const tabs = [
@@ -16,6 +17,7 @@ function App() {
     { id: 'detect' as const, label: 'Duplicate Nonce Detection', icon: AlertTriangle },
     { id: 'recover' as const, label: 'Private Key Recovery', icon: Key },
     { id: 'denovo' as const, label: 'Denovo Scanner', icon: Shield },
+    { id: 'attackaio' as const, label: 'AttackAIO Crypto', icon: Zap },
   ];
 
   const handleAnalysisComplete = (newResults: AnalysisResult[]) => {
@@ -75,6 +77,9 @@ function App() {
               )}
               {activeTab === 'denovo' && (
                 <DenovoAnalyzer onAnalysisComplete={handleAnalysisComplete} />
+              )}
+              {activeTab === 'attackaio' && (
+                <AttackAIOCrypto onAnalysisComplete={handleAnalysisComplete} />
               )}
             </div>
           </div>

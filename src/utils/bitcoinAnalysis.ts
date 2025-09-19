@@ -135,12 +135,80 @@ export const formatPrivateKey = (privateKey: string): {
   hex: string;
   wif: string;
   wifCompressed: string;
+  decimal: string;
+  binary: string;
 } => {
-  // This is a simplified implementation
-  // In a real application, you'd use proper Bitcoin libraries
+  const privKeyBigInt = BigInt('0x' + privateKey);
+  
   return {
     hex: privateKey,
-    wif: `5${privateKey.substring(0, 50)}`, // Mock WIF format
-    wifCompressed: `K${privateKey.substring(0, 50)}` // Mock compressed WIF
+    wif: encodeWIF(privateKey, false),
+    wifCompressed: encodeWIF(privateKey, true),
+    decimal: privKeyBigInt.toString(10),
+    binary: privKeyBigInt.toString(2).padStart(256, '0')
   };
+};
+
+// Base58 encoding for WIF format
+const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+function base58Encode(buffer: Uint8Array): string {
+  let num = BigInt('0x' + Array.from(buffer).map(b => b.toString(16).padStart(2, '0')).join(''));
+  let encoded = '';
+  
+  while (num > 0) {
+    const remainder = num % 58n;
+    num = num / 58n;
+    encoded = BASE58_ALPHABET[Number(remainder)] + encoded;
+  }
+  
+  // Add leading zeros
+  for (let i = 0; i < buffer.length && buffer[i] === 0; i++) {
+    encoded = '1' + encoded;
+  }
+  
+  return encoded;
+}
+
+function sha256(data: Uint8Array): Uint8Array {
+  const hash = CryptoJS.SHA256(CryptoJS.lib.WordArray.create(data as any));
+  const hashArray = new Uint8Array(32);
+  for (let i = 0; i < 8; i++) {
+    const word = hash.words[i];
+    hashArray[i * 4] = (word >>> 24) & 0xff;
+    hashArray[i * 4 + 1] = (word >>> 16) & 0xff;
+    hashArray[i * 4 + 2] = (word >>> 8) & 0xff;
+    hashArray[i * 4 + 3] = word & 0xff;
+  }
+  return hashArray;
+}
+
+function encodeWIF(privateKeyHex: string, compressed: boolean): string {
+  const privateKeyBytes = new Uint8Array(privateKeyHex.match(/.{2}/g)!.map(byte => parseInt(byte, 16)));
+  
+  // Add version byte (0x80 for mainnet)
+  const versionByte = new Uint8Array([0x80]);
+  let payload = new Uint8Array(versionByte.length + privateKeyBytes.length);
+  payload.set(versionByte);
+  payload.set(privateKeyBytes, versionByte.length);
+  
+  // Add compression flag if compressed
+  if (compressed) {
+    const temp = new Uint8Array(payload.length + 1);
+    temp.set(payload);
+    temp[temp.length - 1] = 0x01;
+    payload = temp;
+  }
+  
+  // Double SHA256 for checksum
+  const hash1 = sha256(payload);
+  const hash2 = sha256(hash1);
+  const checksum = hash2.slice(0, 4);
+  
+  // Combine payload and checksum
+  const result = new Uint8Array(payload.length + checksum.length);
+  result.set(payload);
+  result.set(checksum, payload.length);
+  
+  return base58Encode(result);
 };
