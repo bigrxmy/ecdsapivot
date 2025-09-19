@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import { Shield, Key, Search, AlertTriangle, CheckCircle, Zap, Target, BarChart3 } from 'lucide-react';
+import { Shield, Key, Search, AlertTriangle, CheckCircle, Zap } from 'lucide-react';
 import TransactionAnalyzer from './components/TransactionAnalyzer';
 import DuplicateNonceDetector from './components/DuplicateNonceDetector';
 import PrivateKeyRecovery from './components/PrivateKeyRecovery';
 import DenovoAnalyzer from './components/DenovoAnalyzer';
 import AttackAIOCrypto from './components/AttackAIOCrypto';
-import CTFCryptoAttacks from './components/CTFCryptoAttacks';
-import BlockchainAnalyzer from './components/BlockchainAnalyzer';
 import ResultsDisplay from './components/ResultsDisplay';
 import { AnalysisResult } from './types/bitcoin';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'analyze' | 'detect' | 'recover' | 'denovo' | 'attackaio' | 'ctf' | 'blockchain'>('analyze');
+  const [activeTab, setActiveTab] = useState<'analyze' | 'detect' | 'recover' | 'denovo' | 'attackaio'>('analyze');
   const [results, setResults] = useState<AnalysisResult[]>([]);
 
   const tabs = [
@@ -20,8 +18,6 @@ function App() {
     { id: 'recover' as const, label: 'Private Key Recovery', icon: Key },
     { id: 'denovo' as const, label: 'Denovo Scanner', icon: Shield },
     { id: 'attackaio' as const, label: 'AttackAIO Crypto', icon: Zap },
-    { id: 'ctf' as const, label: 'CTF Crypto Attacks', icon: Target },
-    { id: 'blockchain' as const, label: 'Blockchain Analysis', icon: BarChart3 },
   ];
 
   const handleAnalysisComplete = (newResults: AnalysisResult[]) => {
@@ -35,25 +31,24 @@ function App() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
             <Shield className="w-12 h-12 text-purple-400 mr-3" />
-            <h1 className="text-4xl font-bold text-white">Crypto Analysis Suite</h1>
+            <h1 className="text-4xl font-bold text-white">Bitcoin ECDSA Analyzer</h1>
           </div>
           <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            Comprehensive cryptographic analysis toolkit featuring Bitcoin ECDSA analysis, 
-            CTF crypto attacks, blockchain investigation, and advanced attack methodologies.
+            Advanced cryptographic analysis tool for Bitcoin transactions, ECDSA signature analysis, 
+            and private key recovery from duplicate nonce usage.
           </p>
         </div>
 
         {/* Navigation Tabs */}
         <div className="flex justify-center mb-8">
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-1 border border-slate-700 overflow-x-auto">
-            <div className="flex space-x-1 min-w-max">
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-1 border border-slate-700">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center px-4 py-3 rounded-md transition-all duration-200 whitespace-nowrap ${
+                  className={`flex items-center px-6 py-3 rounded-md transition-all duration-200 ${
                     activeTab === tab.id
                       ? 'bg-purple-600 text-white shadow-lg'
                       : 'text-gray-300 hover:text-white hover:bg-slate-700/50'
@@ -64,7 +59,6 @@ function App() {
                 </button>
               );
             })}
-            </div>
           </div>
         </div>
 
@@ -87,12 +81,6 @@ function App() {
               {activeTab === 'attackaio' && (
                 <AttackAIOCrypto onAnalysisComplete={handleAnalysisComplete} />
               )}
-              {activeTab === 'ctf' && (
-                <CTFCryptoAttacks onAnalysisComplete={handleAnalysisComplete} />
-              )}
-              {activeTab === 'blockchain' && (
-                <BlockchainAnalyzer onAnalysisComplete={handleAnalysisComplete} />
-              )}
             </div>
           </div>
 
@@ -108,9 +96,9 @@ function App() {
             <div>
               <h3 className="text-amber-400 font-semibold mb-2">Security Notice</h3>
               <p className="text-amber-200 text-sm">
-                This comprehensive crypto analysis suite is for educational, research, and authorized 
-                security testing purposes only. Always ensure you have proper authorization before 
-                analyzing any cryptographic systems or blockchain data. Use responsibly and ethically.
+                This tool is for educational and research purposes only. Never use recovered private keys 
+                to access funds that don't belong to you. Always ensure you have proper authorization 
+                before analyzing any Bitcoin transactions.
               </p>
             </div>
           </div>
