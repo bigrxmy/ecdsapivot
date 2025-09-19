@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Key, Loader2, AlertCircle, Copy } from 'lucide-react';
 import { AnalysisResult } from '../types/bitcoin';
-import { recoverPrivateKey, formatPrivateKey } from '../utils/bitcoinAnalysis';
+import { recoverPrivateKey } from '../utils/bitcoinAnalysis';
 
 interface Props {
   onAnalysisComplete: (results: AnalysisResult[]) => void;
@@ -204,23 +204,8 @@ const PrivateKeyRecovery: React.FC<Props> = ({ onAnalysisComplete }) => {
                 Copy
               </button>
             </div>
-            <div className="space-y-3">
-              <div className="bg-slate-800/50 rounded p-3">
-                <div className="text-xs text-gray-400 mb-1">Hex Format:</div>
-                <div className="font-mono text-sm text-green-300 break-all">{recoveredKey}</div>
-              </div>
-              <div className="bg-slate-800/50 rounded p-3">
-                <div className="text-xs text-gray-400 mb-1">WIF (Uncompressed):</div>
-                <div className="font-mono text-sm text-green-300 break-all">
-                  {formatPrivateKey(recoveredKey).wif}
-                </div>
-              </div>
-              <div className="bg-slate-800/50 rounded p-3">
-                <div className="text-xs text-gray-400 mb-1">WIF (Compressed):</div>
-                <div className="font-mono text-sm text-green-300 break-all">
-                  {formatPrivateKey(recoveredKey).wifCompressed}
-                </div>
-              </div>
+            <div className="bg-slate-800/50 rounded p-3 font-mono text-sm text-green-300 break-all">
+              {recoveredKey}
             </div>
           </div>
         )}
