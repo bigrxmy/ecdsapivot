@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import { Shield, Key, Search, AlertTriangle, CheckCircle, Zap, Hash } from 'lucide-react';
+import { Shield, Key, Search, AlertTriangle, CheckCircle, Zap, Target, BarChart3 } from 'lucide-react';
 import TransactionAnalyzer from './components/TransactionAnalyzer';
 import DuplicateNonceDetector from './components/DuplicateNonceDetector';
 import PrivateKeyRecovery from './components/PrivateKeyRecovery';
 import DenovoAnalyzer from './components/DenovoAnalyzer';
 import AttackAIOCrypto from './components/AttackAIOCrypto';
-import BlockAnalyzer from './components/BlockAnalyzer';
 import CTFCryptoAttacks from './components/CTFCryptoAttacks';
 import BlockchainAnalyzer from './components/BlockchainAnalyzer';
 import ResultsDisplay from './components/ResultsDisplay';
 import { AnalysisResult } from './types/bitcoin';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'analyze' | 'detect' | 'recover' | 'denovo' | 'attackaio' | 'block'>('analyze');
+  const [activeTab, setActiveTab] = useState<'analyze' | 'detect' | 'recover' | 'denovo' | 'attackaio' | 'ctf' | 'blockchain'>('analyze');
   const [results, setResults] = useState<AnalysisResult[]>([]);
 
   const tabs = [
@@ -21,7 +20,6 @@ function App() {
     { id: 'recover' as const, label: 'Private Key Recovery', icon: Key },
     { id: 'denovo' as const, label: 'Denovo Scanner', icon: Shield },
     { id: 'attackaio' as const, label: 'AttackAIO Crypto', icon: Zap },
-    { id: 'block' as const, label: 'Block Analysis', icon: Hash },
     { id: 'ctf' as const, label: 'CTF Crypto Attacks', icon: Target },
     { id: 'blockchain' as const, label: 'Blockchain Analysis', icon: BarChart3 },
   ];
@@ -88,9 +86,6 @@ function App() {
               )}
               {activeTab === 'attackaio' && (
                 <AttackAIOCrypto onAnalysisComplete={handleAnalysisComplete} />
-              )}
-              {activeTab === 'block' && (
-                <BlockAnalyzer onAnalysisComplete={handleAnalysisComplete} />
               )}
               {activeTab === 'ctf' && (
                 <CTFCryptoAttacks onAnalysisComplete={handleAnalysisComplete} />
